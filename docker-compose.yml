@@ -1,0 +1,21 @@
+services:
+  app:
+    build: .
+    container_name: air-stations-app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+  
+  redis: 
+    image: redis:alpine
+    container_name: air_stations-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
