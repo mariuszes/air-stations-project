@@ -1,0 +1,20 @@
+service:
+  spec:
+    type: NodePort
+
+ports:
+  web:
+    nodePort: 30080
+  websecure:
+    expose:
+      default: false
+
+providers:
+  kubernetesIngress:
+    enabled: true
+  
+  kubernetesCRD:
+    enabled: false
+
+  kubernetesGateway:
+    enabled: false

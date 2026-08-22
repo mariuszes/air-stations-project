@@ -27,6 +27,8 @@ http://localhost:8000
 Remove containers and volumes:
 `docker compose down --volumes`
 
+To run the Kubernetes version of the project, run this command in your terminal: `.\start-k8s.ps1`
+
 ## Available Pages and API Routes
 
 * **Web interface**
@@ -40,9 +42,15 @@ _GET /_ - opens a simple page where the user can test all main functions from th
 
 * **Health check**
 
-_GET /health_ - checks if the application and Redis are working.
+_GET /health_ - checks whether the FastAPI application is running.
 
 `http://localhost:8000/health`
+
+* **Readiness check**
+
+_GET /ready_ - checks if the application and Redis are ready to serve requests.
+
+`http://localhost:8000/ready`
 
 * **Find stations by city**
 
@@ -94,8 +102,29 @@ Measurements for a selected sensor
 This reduces the number of requests sent to the external GIOŚ API.
 
 
+## Kubernetes
+
+While revisiting this project to learn Kubernetes, I practiced:
+
+- Multi-node kind cluster
+- Deployments and ReplicaSets
+- Pod self-healing and node failure recovery
+- Scaling and rolling updates
+- ClusterIP, NodePort and headless Services
+- CoreDNS, service discovery and EndpointSlices
+- ConfigMaps (loading environment configuration previously kept in `.env`) and namespaces
+- Liveness and readiness probes
+- CPU and memory requests and limits
+- kube-proxy, API Server, iptables concepts and Pod-to-Pod communication
+- Traefik Ingress Controller, IngressClass and `networking.k8s.io/v1` Ingress
+- StatefulSet with stable Pod identity
+- PersistentVolume and PersistentVolumeClaim
+- Local persistent storage with node affinity
+
+The Redis StatefulSet intentionally uses a single replica. It was mainly added to understand StatefulSet behaviour, stable Pod identity and persistent storage. Scaling this particular setup to multiple Redis replicas sharing the same volume could lead to <u>race conditions</u>.
+
+While revisiting this project to learn Kubernetes, I read *Kubernetes: Up & Running*. Since I used an older edition, I often checked current Kubernetes documentation to understand how some of the older concepts are handled today - for example, using EndpointSlices instead of the older Endpoints API, current node affinity mechanisms and Gateway API (I still used Ingress here to learn the fundamentals).
+
 ## Notes
 
 Some sensors may not return measurement data. This depends on the GIOŚ API and the type of measurement station.
-
-The cache data may stay available after restarting containers because Redis uses a Docker volume.

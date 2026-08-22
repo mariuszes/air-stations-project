@@ -79,16 +79,23 @@ def home():
 
 @app.get("/health")
 def health():
+    return {
+        "app": "ok"
+    }
+
+@app.get("/ready")
+def ready():
     try:
         redis_client.ping()
-        redis_status = "ok"
-    except:
-        redis_status = "error"
-
-    return {
-        "app": "ok",
-        "redis": redis_status
-    }
+        return {
+            "app": "ok",
+            "redis": "ok"
+        }
+    except redis.RedisError as error:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Redis error: {error}"
+        )
 
 @app.get("/stations")
 def get_stations(city: str):

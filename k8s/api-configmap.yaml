@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: api-config
+  namespace: air-stations
+
+data:
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  GIOS_STATIONS_URL: "https://api.gios.gov.pl/pjp-api/v1/rest/station/findAll"
+  GIOS_SENSORS_URL: "https://api.gios.gov.pl/pjp-api/v1/rest/station/sensors"
+  GIOS_MEASUREMENTS_URL: "https://api.gios.gov.pl/pjp-api/v1/rest/data/getData"

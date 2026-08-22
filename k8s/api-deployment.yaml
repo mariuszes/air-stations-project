@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: air-stations-api
+  namespace: air-stations
+  annotations:
+    kubernetes.io/change-cause: "scale API to 3 replicas"
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: air-stations-api
+
+  template:
+    metadata:
+      labels:
+        app: air-stations-api
+
+    spec:
+      containers:
+        - name: air-stations-api
+          image: air-stations-api:local
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: api-config
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
